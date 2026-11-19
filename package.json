@@ -1,0 +1,57 @@
+{
+  "name": "krz-print-pos",
+  "productName": "KRZ PRINT POS",
+  "version": "3.0.0",
+  "description": "KRZ PRINT POS - Single-Station Offline Point of Sale & Print Job Management (SQLite + Electron)",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "server": "node server.js",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder --win portable nsis"
+  },
+  "keywords": [
+    "pos",
+    "print-shop",
+    "inventory",
+    "sqlite",
+    "single-station",
+    "electron",
+    "offline"
+  ],
+  "author": "KRZ PRINT",
+  "license": "UNLICENSED",
+  "private": false,
+  "build": {
+    "appId": "com.krzprint.pos",
+    "productName": "KRZ PRINT POS",
+    "files": [
+      "main.js",
+      "preload.js",
+      "db-sqlite.js",
+      "index.html",
+      "app.js",
+      "manifest.webmanifest",
+      "icon-192.png",
+      "icon-512.png",
+      "package.json"
+    ],
+    "win": {
+      "icon": "icon-512.png",
+      "target": [
+        "portable",
+        "nsis"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
+  },
+  "devDependencies": {
+    "electron": "^35.0.0",
+    "electron-builder": "^26.0.12"
+  }
+}

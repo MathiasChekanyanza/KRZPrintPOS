@@ -1,0 +1,15 @@
+KRZ PRINT POS - CHANGELOG
+========================
+Version 3.0 - Single-Station SQLite, Staff Login & Print Shop Upgrade
+
+NEW
+- SQLite Relational Database (db-sqlite.js -> krz_print_pos.sqlite):
+  Normalized SQLite tables (settings, users, products, customers, sales, sale_items, jobs, job_payments, expenses, stock_log) powered by built-in node:sqlite in both Electron (main.js) and Local Single-Station Server (server.js / START_POS.bat).
+- Single-Station Only (No Multi-Tills):
+  - Loopback-only binding (127.0.0.1) blocks external LAN/multi-till connections.
+  - Electron single-instance lock (requestSingleInstanceLock) prevents duplicate windows.
+  - Multi-tab BroadcastChannel lock ensures only one active till window operates at a time.
+- Staff Login & Role Permissions: Admin and Cashier accounts (default: admin / PIN 1234), supervisor PIN prompt for restricted actions, active user badge + Logout button in header, and cashier attribution on receipts.
+- Barcode scanner Enter-to-add, Cash Tendered & Change Due, optional Customer on POS sales, Service/Non-stock items, and Sales Void/Refund with automatic stock restoration.
+- Print Job Quotes ("Quote" status with Approve button), print specifications, and Payment History modal.
+- Unified Reports with Print Job collections, Shop Expenses, Date-range filtering, Printable Daily Z-Report, CSV exports, and Shop/GCT Settings.

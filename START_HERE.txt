@@ -1,0 +1,27 @@
+KRZ PRINT POS - SINGLE-STATION SQLITE DESKTOP & LOCAL APP
+VERSION 3.0
+=========================================================
+
+STAFF LOGIN (DEFAULT ACCOUNT)
+- Username: admin
+- PIN / Password: 1234
+- Change the Admin PIN and add Cashier or Admin staff accounts under:
+  Backup & Restore > Staff Accounts & Login PINs.
+
+SINGLE-STATION SQLITE ARCHITECTURE (ONE STATION · NO MULTI-TILLS)
+- Database Engine: Built-in Node.js SQLite (node:sqlite) storing relational tables in:
+    krz_print_pos.sqlite
+- Tables: settings, users, products, customers, sales, sale_items, jobs, job_payments, expenses, stock_log
+- Single-Station Enforcement:
+  1. Server binds strictly to 127.0.0.1 (blocks network/LAN connections from other computers or remote tills).
+  2. Electron enforces app.requestSingleInstanceLock() so only one desktop window can run.
+  3. Browser BroadcastChannel lock prevents multiple tabs/windows from operating simultaneous active tills.
+
+WAY 1: DOUBLE-CLICK START_POS.bat (Zero-Install Local SQLite Server)
+1. Double-click START_POS.bat (or run `node server.js` in this folder).
+2. It starts the Single-Station SQLite server on http://localhost:8000 and opens your browser automatically.
+3. All records are saved directly to krz_print_pos.sqlite in this folder.
+
+WAY 2: RUN AS ELECTRON DESKTOP APP
+1. Run `npm install` (once) and `npm start`.
+2. Launches the standalone desktop window backed directly by krz_print_pos.sqlite.

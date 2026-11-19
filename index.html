@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#102b46">
+<title>KRZ PRINT POS</title>
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+:root{--navy:#102b46;--blue:#1769aa;--pale:#f2f6fa;--ink:#1d2935;--muted:#6b7785;--line:#dce4ec;--green:#16834b;--red:#b83232}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--pale);color:var(--ink)}
+header{height:64px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 22px;position:sticky;top:0;z-index:3}
+.brand{font-size:20px;font-weight:800;letter-spacing:.5px}.brand small{display:block;font-size:10px;letter-spacing:2px;color:#b9d4ec;margin-top:3px}
+header .right{font-size:13px;color:#d7e6f3}
+.layout{display:flex;min-height:calc(100vh - 64px)}nav{width:220px;background:#173957;padding:18px 12px;flex-shrink:0}
+nav button{display:block;width:100%;text-align:left;padding:13px 14px;margin:4px 0;border:0;border-radius:8px;background:transparent;color:#e8f2fa;font-size:14px;cursor:pointer}
+nav button.active,nav button:hover{background:#2b5b82;color:white}
+main{padding:24px;width:calc(100% - 220px);max-width:1500px;margin:0 auto}
+h1{font-size:25px;margin:0 0 7px;color:var(--navy)}.sub{color:var(--muted);margin:0 0 22px;font-size:13px}
+.cards{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:14px;margin:18px 0}
+.card,.panel{background:white;border:1px solid var(--line);border-radius:12px;padding:18px;box-shadow:0 2px 8px #183a5510}
+.metric-label{color:var(--muted);font-size:12px}.metric{font-size:25px;font-weight:800;color:var(--navy);margin-top:8px}
+.panel{margin:14px 0}.panel h2{font-size:17px;margin:0 0 14px;color:var(--navy)}
+.toolbar{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+input,select,textarea{font:inherit;border:1px solid #cbd6e0;border-radius:7px;padding:10px;background:#fff;color:var(--ink);min-width:0}
+input:focus,select:focus,textarea:focus{outline:2px solid #9bc9ef;border-color:var(--blue)}
+.toolbar input{flex:1;min-width:180px}
+button{font:inherit}.btn{border:0;border-radius:7px;padding:10px 14px;background:var(--blue);color:white;cursor:pointer;font-weight:600}
+.btn:hover{filter:brightness(.94)}.btn.secondary{background:#e8eef4;color:#21384d}.btn.danger{background:#b83232}.btn.success{background:var(--green)}
+.btn.small{padding:6px 9px;font-size:12px}
+table{width:100%;border-collapse:collapse;background:white;font-size:13px}
+th,td{padding:11px 9px;border-bottom:1px solid #e7edf2;text-align:left;vertical-align:middle}
+th{background:#f5f8fb;color:#536273;font-size:11px;text-transform:uppercase;letter-spacing:.4px}
+tr:last-child td{border-bottom:0}.right{text-align:right}.muted{color:var(--muted)}.low{color:var(--red);font-weight:bold}.good{color:var(--green);font-weight:bold}
+.formgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field{display:flex;flex-direction:column;gap:6px}.field label{font-size:12px;color:#526170;font-weight:700}
+.field.full{grid-column:1/-1}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}
+.hidden{display:none!important}.posgrid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(320px,.9fr);gap:16px}
+.product-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:10px;max-height:560px;overflow:auto}
+.product-tile{border:1px solid var(--line);border-radius:9px;padding:12px;background:#fff;text-align:left;cursor:pointer}
+.product-tile:hover{border-color:var(--blue);box-shadow:0 2px 8px #1769aa20}.product-tile b{display:block;margin-bottom:7px}
+.product-tile span{color:var(--green);font-weight:bold}.product-tile small{display:block;color:var(--muted);margin-top:6px}
+.cart-total{font-size:24px;font-weight:800;color:var(--navy);text-align:right;padding:15px 0}
+.cartline{display:grid;grid-template-columns:1fr auto;gap:8px;padding:10px 0;border-bottom:1px solid #edf1f5;font-size:13px}
+.cartline small{display:block;color:var(--muted);margin-top:4px}
+.notice{background:#fff8e6;border:1px solid #f2d58a;color:#745500;padding:11px;border-radius:8px;font-size:13px;margin:10px 0}
+.empty{padding:28px;text-align:center;color:var(--muted)}
+.badge{font-size:11px;padding:4px 7px;border-radius:20px;background:#eaf0f5;color:#41566b}
+footer{font-size:11px;color:#7c8996;text-align:center;padding:22px}
+dialog{border:0;border-radius:12px;padding:0;width:min(560px,calc(100% - 24px));box-shadow:0 15px 60px #0004}
+dialog::backdrop{background:#0b1e30aa}.modalhead{background:var(--navy);color:#fff;padding:16px 20px;font-weight:bold}.modalbody{padding:20px}
+.toast{position:fixed;right:18px;bottom:18px;background:#173957;color:white;padding:12px 17px;border-radius:8px;z-index:10;box-shadow:0 4px 20px #0003}
+.login-overlay{position:fixed;inset:0;background:var(--navy);display:flex;align-items:center;justify-content:center;z-index:20;padding:16px}
+.login-box{background:white;border-radius:12px;width:min(400px,100%);overflow:hidden;box-shadow:0 15px 60px #0006}
+@media(max-width:900px){.cards{grid-template-columns:repeat(2,1fr)}.posgrid{grid-template-columns:1fr}nav{width:175px}main{padding:16px;width:calc(100% - 175px)}}
+@media(max-width:650px){.layout{display:block}nav{width:100%;display:flex;overflow:auto;padding:7px}nav button{white-space:nowrap;width:auto;margin:2px;padding:10px}main{width:100%;padding:14px}.cards{grid-template-columns:repeat(2,1fr)}.formgrid{grid-template-columns:1fr}.field.full{grid-column:auto}header{padding:0 14px}.right{display:none}table{font-size:12px}th,td{padding:8px 6px}}
+@media print{header,nav,.no-print,.login-overlay,footer{display:none!important}body{background:white}main{width:100%;padding:0}.panel,.card{box-shadow:none}}
+</style>
+</head>
+<body>
+<header><div class="brand">KRZ PRINT <small>OFFLINE POINT OF SALE</small></div><div class="right"><span id="currentUserBadge"></span> · Jamaican Dollars (JMD) <button class="btn small secondary no-print" id="logoutBtn" style="margin-left:8px">Logout</button></div></header>
+<div class="layout">
+<nav id="nav">
+<button class="active" data-page="dashboard">▦ Dashboard</button>
+<button data-page="pos">▣ Point of Sale</button>
+<button data-page="products">▤ Products</button>
+<button data-page="inventory">▥ Inventory</button>
+<button data-page="sales">▧ Sales History</button>
+<button data-page="customers">♙ Customers</button>
+<button data-page="jobs">▣ Print Jobs</button>
+<button data-page="reports">▨ Reports</button>
+<button data-page="backup">⇩ Backup & Restore</button>
+</nav>
+<main>
+<section id="page-dashboard">
+<h1>Dashboard</h1><p class="sub">Your KRZ PRINT business at a glance.</p>
+<div id="backupReminder" class="notice hidden"></div>
+<div class="cards">
+<div class="card"><div class="metric-label">Today's Sales</div><div class="metric" id="todaySales">$0.00</div></div>
+<div class="card"><div class="metric-label">Sales This Month</div><div class="metric" id="monthSales">$0.00</div></div>
+<div class="card"><div class="metric-label">Active Products</div><div class="metric" id="productCount">0</div></div>
+<div class="card"><div class="metric-label">Low Stock Items</div><div class="metric" id="lowCount">0</div></div>
+</div>
+<div class="panel"><h2>Recent Sales</h2><div id="recentSales"></div></div>
+<div class="panel"><h2>Items Needing Reorder</h2><div id="dashboardLow"></div></div>
+</section>
+
+<section id="page-pos" class="hidden">
+<h1>Point of Sale</h1><p class="sub">Select products or search by name / SKU / barcode. Click a product to add it to the cart.</p>
+<div class="posgrid">
+<div class="panel">
+<div class="toolbar"><input id="posSearch" placeholder="Search product or scan barcode..." autocomplete="off"><button class="btn secondary" id="clearSearch">Clear</button></div>
+<div class="product-list" id="posProducts"></div>
+</div>
+<div class="panel">
+<h2>Current Sale</h2><div id="cartLines"><div class="empty">No items added yet.</div></div>
+<div id="cartSummary" class="muted right" style="padding-top:8px;font-size:12px"></div>
+<div class="cart-total" id="cartTotal">$0.00</div>
+<div class="formgrid">
+<div class="field"><label>Discount (JMD)</label><input type="number" min="0" step="0.01" id="discount" value="0"></div>
+<div class="field"><label>Payment Method</label><select id="payment"><option>Cash</option><option>Card</option><option>Bank Transfer</option><option>Other</option></select></div>
+<div class="field"><label>Amount Tendered (JMD)</label><input type="number" min="0" step="0.01" id="cashTendered" placeholder="Optional (for change)"></div>
+<div class="field"><label>Customer (Optional)</label><select id="posCustomer"><option value="">Walk-in Customer</option></select></div>
+</div>
+<div class="actions"><button class="btn success" id="completeSale">Complete Sale</button><button class="btn secondary" id="clearCart">Clear Cart</button></div>
+</div>
+</div>
+</section>
+
+<section id="page-products" class="hidden">
+<h1>Products</h1><p class="sub">Add and maintain products, services and prices.</p>
+<div class="panel">
+<div class="toolbar"><input id="productSearch" placeholder="Search products..."><button class="btn" id="addProduct">＋ Add Product</button></div>
+<div id="productsTable"></div>
+</div>
+</section>
+
+<section id="page-inventory" class="hidden">
+<h1>Inventory</h1><p class="sub">Review stock on hand and adjust stock levels.</p>
+<div class="panel"><div class="toolbar"><input id="inventorySearch" placeholder="Search inventory..."></div><div id="inventoryTable"></div></div>
+<div class="panel"><h2>Recent Stock Movements</h2><div id="stockLogTable"></div></div>
+</section>
+
+<section id="page-sales" class="hidden">
+<h1>Sales History</h1><p class="sub">View completed transactions and print a receipt.</p>
+<div class="panel"><div class="toolbar"><input id="salesSearch" placeholder="Search receipt number or payment method..."><input type="date" id="salesDate"></div><div id="salesTable"></div></div>
+</section>
+
+<section id="page-customers" class="hidden">
+<h1>Customers</h1><p class="sub">Keep customer contact details for print jobs and repeat business.</p>
+<div class="panel"><div class="toolbar"><input id="customerSearch" placeholder="Search customer name, phone or email..."><button class="btn" id="addCustomer">＋ Add Customer</button></div><div id="customersTable"></div></div>
+</section>
+
+<section id="page-jobs" class="hidden">
+<h1>Printing Job Orders</h1><p class="sub">Track print work, customer deposits, balances and collection status.</p>
+<div class="cards">
+<div class="card"><div class="metric-label">Open Jobs</div><div class="metric" id="openJobsCount">0</div></div>
+<div class="card"><div class="metric-label">Jobs Ready</div><div class="metric" id="readyJobsCount">0</div></div>
+<div class="card"><div class="metric-label">Outstanding Balances</div><div class="metric" id="jobBalancesTotal">$0.00</div></div>
+<div class="card"><div class="metric-label">Jobs Completed</div><div class="metric" id="completedJobsCount">0</div></div>
+</div>
+<div class="panel"><div class="toolbar"><input id="jobSearch" placeholder="Search job number, customer or description..."><select id="jobStatusFilter"><option value="">All statuses</option><option>Quote</option><option>Pending</option><option>In Progress</option><option>Ready for Collection</option><option>Completed</option><option>Cancelled</option></select><button class="btn" id="addJob">＋ New Print Job</button></div><div id="jobsTable"></div></div>
+</section>
+
+<section id="page-reports" class="hidden">
+<h1>Reports</h1><p class="sub">Sales totals and gross profit based on recorded product costs.</p>
+<div class="toolbar"><input type="date" id="reportFrom" title="From date"><input type="date" id="reportTo" title="To date"><button class="btn secondary" id="clearReportDates">All Dates</button><button class="btn" id="printZReport">Print Daily Z-Report</button><button class="btn secondary" id="addExpense">＋ Record Expense</button></div>
+<div class="cards">
+<div class="card"><div class="metric-label">Gross Sales</div><div class="metric" id="reportGross">$0.00</div></div>
+<div class="card"><div class="metric-label">Discounts</div><div class="metric" id="reportDiscount">$0.00</div></div>
+<div class="card"><div class="metric-label">Estimated Gross Profit</div><div class="metric" id="reportProfit">$0.00</div></div>
+<div class="card"><div class="metric-label">Transactions</div><div class="metric" id="reportCount">0</div></div>
+</div>
+<div class="panel"><h2>Collections Summary (POS & Print Jobs)</h2><div id="collectionsSummary"></div></div>
+<div class="panel"><h2>Sales by Payment Method</h2><div id="paymentReport"></div></div>
+<div class="panel"><h2>Best-selling Products</h2><div id="bestSellers"></div></div>
+<div class="panel"><h2>Recorded Expenses</h2><div id="expensesTable"></div></div>
+</section>
+
+<section id="page-backup" class="hidden">
+<h1>Backup & Restore</h1><p class="sub">Save a copy of your KRZ PRINT data or restore it on this computer.</p>
+<div class="panel">
+<h2>Download Backup & CSV Exports</h2><p class="muted">Export products, sales and settings to a JSON file, or export tables to CSV for Excel. Keep a copy on a USB drive.</p>
+<div class="actions"><button class="btn" id="exportBackup">Download JSON Backup</button><button class="btn secondary" onclick="exportCSV('sales')">Export Sales CSV</button><button class="btn secondary" onclick="exportCSV('jobs')">Export Jobs CSV</button><button class="btn secondary" onclick="exportCSV('products')">Export Products CSV</button><button class="btn secondary" onclick="exportCSV('customers')">Export Customers CSV</button><button class="btn secondary" onclick="exportCSV('expenses')">Export Expenses CSV</button></div>
+</div>
+<div class="panel">
+<h2>Restore Backup</h2><p class="muted">Restoring replaces the current data. Export a backup first if you need to keep existing records.</p>
+<input type="file" id="restoreFile" accept=".json,application/json"><div class="actions"><button class="btn danger" id="restoreBackup">Restore Selected Backup</button></div>
+</div>
+<div class="panel">
+<h2>Shop & Tax (GCT) Settings</h2>
+<form id="settingsForm">
+<div class="formgrid">
+<div class="field"><label>Shop Name</label><input id="setShopName" maxlength="100" value="KRZ PRINT"></div>
+<div class="field"><label>TRN / Tax ID</label><input id="setTrn" maxlength="60" placeholder="Optional"></div>
+<div class="field"><label>Telephone</label><input id="setPhone" maxlength="40"></div>
+<div class="field"><label>Address</label><input id="setAddress" maxlength="140"></div>
+<div class="field"><label>Opening Cash Float (JMD)</label><input id="setOpeningFloat" type="number" min="0" step="0.01" value="0"></div>
+<div class="field"><label>Receipt Footer Message</label><input id="setFooter" maxlength="140" value="Thank you for your business!"></div>
+<div class="field"><label>Tax / GCT Mode</label><select id="setTaxMode"><option value="off">No Tax</option><option value="exclusive">Add Tax at Checkout (Exclusive)</option><option value="inclusive">Prices Include Tax (Inclusive)</option></select></div>
+<div class="field"><label>Tax Rate (%)</label><input id="setTaxRate" type="number" min="0" max="100" step="0.01" value="15"></div>
+</div>
+<div class="actions"><button class="btn" type="submit">Save Settings</button></div>
+</form>
+</div>
+<div class="panel">
+<div class="toolbar"><h2 style="margin:0;flex:1">Staff Accounts & Login PINs</h2><button class="btn" type="button" id="addUser">＋ Add Staff Account</button></div>
+<div id="usersTable"></div>
+</div>
+<div class="notice">Important: data is stored in this browser on this computer. Do not clear browser site data unless you have a backup. Use the same browser profile each time.</div>
+<div class="panel"><h2>Storage status</h2><div id="storageInfo"></div></div>
+</section>
+<footer>KRZ PRINT POS · Offline-first local application · JMD</footer>
+</main>
+</div>
+
+<dialog id="customerDialog">
+<div class="modalhead" id="customerDialogTitle">Add Customer</div><div class="modalbody"><form id="customerForm"><input type="hidden" id="customerEditId"><div class="formgrid">
+<div class="field full"><label>Customer Name *</label><input id="customerName" required maxlength="120"></div>
+<div class="field"><label>Telephone</label><input id="customerPhone" maxlength="40"></div>
+<div class="field"><label>Email</label><input id="customerEmail" type="email" maxlength="120"></div>
+<div class="field full"><label>Address / Notes</label><textarea id="customerNotes" rows="2"></textarea></div>
+</div><div class="actions"><button class="btn" type="submit">Save Customer</button><button class="btn secondary" type="button" id="cancelCustomer">Cancel</button></div></form></div></dialog>
+
+<dialog id="jobDialog">
+<div class="modalhead" id="jobDialogTitle">New Printing Job</div><div class="modalbody"><form id="jobForm"><input type="hidden" id="jobEditId"><div class="formgrid">
+<div class="field full"><label>Customer *</label><select id="jobCustomer" required></select></div>
+<div class="field full"><label>Job Description *</label><textarea id="jobDescription" required rows="2" placeholder="e.g. 500 full-colour flyers, A5, double-sided"></textarea></div>
+<div class="field"><label>Paper / Size</label><input id="jobSize" placeholder="e.g. A4, A5, Glossy 150gsm" maxlength="80"></div>
+<div class="field"><label>Print Mode</label><select id="jobColour"><option value="">Not specified</option><option>Full Colour</option><option>Black & White</option><option>Full Colour Double-Sided</option><option>B&W Double-Sided</option></select></div>
+<div class="field"><label>Finishing</label><input id="jobFinishing" placeholder="e.g. Lamination, Binding, Cutting" maxlength="80"></div>
+<div class="field"><label>Artwork / File Ref</label><input id="jobArtwork" placeholder="e.g. flyer_final_v2.pdf" maxlength="80"></div>
+<div class="field"><label>Quantity</label><input id="jobQty" type="number" min="1" step="1" value="1"></div>
+<div class="field"><label>Total Price (JMD) *</label><input id="jobPrice" type="number" min="0" step=".01" required value="0"></div>
+<div class="field"><label>Deposit Paid (JMD)</label><input id="jobDeposit" type="number" min="0" step=".01" value="0"></div>
+<div class="field"><label>Due Date</label><input id="jobDueDate" type="date"></div>
+<div class="field"><label>Job Status</label><select id="jobStatus"><option>Quote</option><option>Pending</option><option>In Progress</option><option>Ready for Collection</option><option>Completed</option><option>Cancelled</option></select></div>
+<div class="field"><label>Deposit Payment Method</label><select id="jobPaymentMethod"><option>Cash</option><option>Card</option><option>Bank Transfer</option><option>Other</option></select></div>
+</div><div class="actions"><button class="btn" type="submit">Save Job</button><button class="btn secondary" type="button" id="cancelJob">Cancel</button></div></form></div></dialog>
+
+<dialog id="jobPaymentsDialog"><div class="modalhead">Job Payment History</div><div class="modalbody"><div id="jobPaymentsContent"></div><div class="actions"><button class="btn secondary" type="button" id="closeJobPayments">Close</button></div></div></dialog>
+
+<dialog id="paymentDialog"><div class="modalhead">Record Job Payment</div><div class="modalbody"><form id="paymentForm"><input type="hidden" id="paymentJobId"><div class="field"><label>Payment Amount (JMD)</label><input id="paymentAmount" type="number" min="0.01" step=".01" required></div><div class="field" style="margin-top:12px"><label>Payment Method</label><select id="jobExtraPaymentMethod"><option>Cash</option><option>Card</option><option>Bank Transfer</option><option>Other</option></select></div><div class="actions"><button class="btn success" type="submit">Save Payment</button><button class="btn secondary" type="button" id="cancelPayment">Cancel</button></div></form></div></dialog>
+
+<dialog id="productDialog">
+<div class="modalhead" id="productDialogTitle">Add Product</div>
+<div class="modalbody">
+<form id="productForm">
+<input type="hidden" id="editId">
+<div class="formgrid">
+<div class="field"><label>SKU / Barcode *</label><input id="pSku" required maxlength="60"></div>
+<div class="field"><label>Product Name *</label><input id="pName" required maxlength="120"></div>
+<div class="field"><label>Category</label><input id="pCategory" placeholder="e.g. Printing, Paper, Ink"></div>
+<div class="field"><label>Cost Price (JMD)</label><input id="pCost" type="number" min="0" step=".01" value="0"></div>
+<div class="field"><label>Selling Price (JMD) *</label><input id="pPrice" type="number" min="0" step=".01" required value="0"></div>
+<div class="field"><label>Quantity in Stock</label><input id="pQty" type="number" min="0" step="1" value="0"></div>
+<div class="field"><label>Reorder Level</label><input id="pReorder" type="number" min="0" step="1" value="5"></div>
+<div class="field"><label><input type="checkbox" id="pTrackStock" checked> Track Inventory Stock (uncheck for service items)</label></div>
+<div class="field"><label><input type="checkbox" id="pTaxable" checked> Subject to Tax (GCT)</label></div>
+</div>
+<div class="actions"><button class="btn" type="submit">Save Product</button><button class="btn secondary" type="button" id="cancelProduct">Cancel</button></div>
+</form>
+</div>
+</dialog>
+
+<dialog id="expenseDialog">
+<div class="modalhead">Record Shop Expense</div>
+<div class="modalbody">
+<form id="expenseForm">
+<div class="formgrid">
+<div class="field"><label>Category</label><select id="expCategory"><option>Paper & Media</option><option>Ink & Toner</option><option>Equipment & Maintenance</option><option>Utilities</option><option>Wages & Labour</option><option>Supplies & Packaging</option><option>Other</option></select></div>
+<div class="field"><label>Payment Method</label><select id="expMethod"><option>Cash</option><option>Card</option><option>Bank Transfer</option><option>Other</option></select></div>
+<div class="field"><label>Amount (JMD) *</label><input id="expAmount" type="number" min="0.01" step="0.01" required></div>
+<div class="field"><label>Date</label><input id="expDate" type="date"></div>
+<div class="field full"><label>Description *</label><input id="expDesc" required maxlength="140" placeholder="e.g. 5 reams A4 80gsm paper"></div>
+</div>
+<div class="actions"><button class="btn" type="submit">Save Expense</button><button class="btn secondary" type="button" id="cancelExpense">Cancel</button></div>
+</form>
+</div>
+</dialog>
+
+<dialog id="userDialog">
+<div class="modalhead" id="userDialogTitle">Add Staff Account</div>
+<div class="modalbody">
+<form id="userForm">
+<input type="hidden" id="userEditId">
+<div class="formgrid">
+<div class="field"><label>Username *</label><input id="uUsername" required maxlength="40" placeholder="e.g. cashier1"></div>
+<div class="field"><label>Full Name *</label><input id="uName" required maxlength="80" placeholder="e.g. Sarah Brown"></div>
+<div class="field"><label>Role</label><select id="uRole"><option>Cashier</option><option>Admin</option></select></div>
+<div class="field"><label>PIN / Password *</label><input id="uPin" type="password" required maxlength="40" placeholder="Enter PIN or password"></div>
+</div>
+<div class="actions"><button class="btn" type="submit">Save Account</button><button class="btn secondary" type="button" id="cancelUser">Cancel</button></div>
+</form>
+</div>
+</dialog>
+
+<div id="loginOverlay" class="login-overlay hidden">
+<div class="login-box">
+<div class="modalhead">KRZ PRINT POS · Staff Sign In</div>
+<div class="modalbody">
+<form id="loginForm">
+<div class="field"><label>Username</label><input id="loginUsername" required autocomplete="username" placeholder="Enter username (e.g. admin)"></div>
+<div class="field" style="margin-top:12px"><label>PIN / Password</label><input id="loginPin" type="password" required autocomplete="current-password" placeholder="Enter PIN or password"></div>
+<div id="loginHint" class="muted" style="margin-top:10px;font-size:12px"></div>
+<div class="actions"><button class="btn" type="submit" style="width:100%">Sign In</button></div>
+</form>
+</div>
+</div>
+</div>
+<div id="toast" class="toast hidden"></div>
+<script src="app.js"></script><script src="register-sw.js"></script>
+</body>
+</html>
